@@ -1,0 +1,5 @@
+python-telegram-bot==20.3
+transformers==4.30
+torch==2.0.1
+python-dotenv==1.0.0
+requests==2.31.0
