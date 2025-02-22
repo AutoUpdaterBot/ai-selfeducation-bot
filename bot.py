@@ -1,24 +1,21 @@
-import os
-from telegram import Update
-from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters
-from dotenv import load_dotenv
+import logging
+from telegram.ext import Application
 
-load_dotenv()
+# Настройка логов
+logging.basicConfig(
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    level=logging.INFO
+)
 
-async def start(update: Update, context):
-    await update.message.reply_text("Привет! Я твой помощник в саморазвитии. Напиши /help для списка команд")
-
-async def help_command(update: Update, context):
-    help_text = """
-    Доступные команды:
-    /start - начать работу
-    /task - получить задание
-    /motivate - мотивационное сообщение
-    """
-    await update.message.reply_text(help_text)
+async def post_init(app: Application):
+    logging.info("Бот успешно инициализирован")
 
 if __name__ == "__main__":
-    app = ApplicationBuilder().token(os.getenv("TELEGRAM_TOKEN")).build()
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("help", help_command))
-    app.run_polling()
+    try:
+        app = ApplicationBuilder().token(os.getenv("TELEGRAM_TOKEN")).post_init(post_init).build()
+        app.add_handler(CommandHandler("start", start))
+        logging.info("Запуск бота...")
+        app.run_polling()
+    except Exception as e:
+        logging.critical(f"FATAL ERROR: {str(e)}")
+        sys.exit(100)
